@@ -1,1 +1,17 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+.row {
+    @apply flex flex-wrap justify-center;
+}
+.active{
+    @apply text-blue-700
+}
+.default-background{
+    @apply bg-white border-gray-200 dark:bg-gray-900;
+}
+.default-text-color{
+    @apply text-gray-900 dark:text-white
+}
