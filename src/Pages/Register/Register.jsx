@@ -26,13 +26,14 @@ export default function Register() {
       );
 
       console.log(data);
-      if (data.msg === "done") {
+      if (data?.msg === "done") {
         setMessages((oldState) => {
           return {
             ...oldState,
             successfulMsg: "Successful! Redirecting to Login page!",
           };
         });
+        localStorage.setItem('NoteAppToken', data?.user._id);
       }
 
       setTimeout(() => {
@@ -81,7 +82,7 @@ export default function Register() {
         <div>
           {messages.successfulMsg && (
             <div
-              className="w-full mx-auto md:w-1/2 py-2 px-4 mb-4  text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
+              className="capitalize w-full mx-auto md:w-1/2 py-2 px-4 mb-4  text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
               role="alert"
             >
               {messages.successfulMsg}
@@ -89,7 +90,7 @@ export default function Register() {
           )}
           {messages.errorMsg && (
             <div
-              className="w-full mx-auto md:w-1/2 py-2 px-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+              className="capitalize w-full mx-auto md:w-1/2 py-2 px-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
               {messages.errorMsg}
@@ -273,6 +274,7 @@ export default function Register() {
           >
             Reset
           </button>
+          <p className="text-sm inline-block ms-3">You have an account? <span className="font-semibold cursor-pointer" onClick={()=> navigate('/login')}>Login</span></p>
         </form>
       </div>
     </>

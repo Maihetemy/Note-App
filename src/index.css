@@ -3,15 +3,22 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
+html {
+    @apply bg-white dark:bg-gray-900
+}
+
 .row {
     @apply flex flex-wrap justify-center;
 }
-.active{
+
+.active {
     @apply text-blue-700
 }
-.default-background{
-    @apply bg-white border-gray-200 dark:bg-gray-900;
+
+.default-background {
+    @apply bg-white dark:bg-gray-900;
 }
-.default-text-color{
+
+.default-text-color {
     @apply text-gray-900 dark:text-white
 }

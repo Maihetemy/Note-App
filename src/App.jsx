@@ -7,6 +7,7 @@ import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import NotFound from "./Components/NotFound/NotFound";
+import ProtectedRouter from "./Components/ProtectedRouter/ProtectedRouter";
 
 function App() {
   const routes = createBrowserRouter([
@@ -14,9 +15,26 @@ function App() {
       path: "/",
       element: <Layout />,
       children: [
-        { index: true, element: <Home /> },
-        { path: "login", element: <Login /> },
-        { path: "register", element: <Register /> },
+        {
+          index: true,
+          element: (
+            <ProtectedRouter>
+              <Home />
+            </ProtectedRouter>
+          ),
+        },
+        {
+          path: "login",
+          element: (
+              <Login />
+          ),
+        },
+        {
+          path: "register",
+          element: (
+              <Register />
+          ),
+        },
         { path: "*", element: <NotFound /> },
       ],
     },

@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Register from './../Register/Register';
 
 export default function Login() {
   const [messages, setMessages] = useState({
@@ -23,7 +24,7 @@ export default function Login() {
         "https://note-sigma-black.vercel.app/api/v1/users/signIn",
         values
       );
-      if (data.msg === "done") {
+      if (data?.msg === "done") {
         setMessages((oldState) => {
           return { ...oldState, successfulMsg: "Successful login! " };
         });
@@ -31,7 +32,7 @@ export default function Login() {
       }
     } catch (error) {
       setMessages((oldState) => {
-        return { ...oldState, errorMsg: error.response.data.msg };
+        return { ...oldState, errorMsg: error?.response?.data.msg };
       });
       console.log(error);
     }
@@ -154,6 +155,7 @@ export default function Login() {
           >
             Reset
           </button>
+          <p className="text-sm inline-block ms-3">You have an account? <span className="font-semibold cursor-pointer" onClick={()=> navigate('/register')}>Register</span></p>
         </form>
       </div>
     </>
