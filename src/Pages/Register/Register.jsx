@@ -1,50 +1,53 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import style from "./Register.module.css";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useRegisterHook from "./../../Hooks/RegisterHook";
+import { RiLoader5Fill } from "react-icons/ri";
 export default function Register() {
-  const [messages, setMessages] = useState({
-    successfulMsg: "",
-    errorMsg: "",
-  });
-  useEffect(() => {}, []);
+  // const [messages, setMessages] = useState({
+  //   successfulMsg: "",
+  //   errorMsg: "",
+  // });
+  const { mutate, data, isPending, isError, error } = useRegisterHook();
+
   const navigate = useNavigate();
   // -----api function------
-  const callRegisterApi = async (values) => {
-    try {
-      setMessages({
-        successfulMsg: "",
-        errorMsg: "",
-      });
+  // const callRegisterApi = async (values) => {
+  //   try {
+  //     // initial messages
+  //     setMessages({
+  //       successfulMsg: "",
+  //       errorMsg: "",
+  //     });
+  //     // register api post
+  //     const { data } = await axios.post(
+  //       "https://note-sigma-black.vercel.app/api/v1/users/signUp",
+  //       values
+  //     );
 
-      const { data } = await axios.post(
-        "https://note-sigma-black.vercel.app/api/v1/users/signUp",
-        values
-      );
-
-      console.log(data);
-      if (data?.msg === "done") {
-        setMessages((oldState) => {
-          return {
-            ...oldState,
-            successfulMsg: "Successful! Redirecting to Login page!",
-          };
-        });
-        localStorage.setItem('NoteAppToken', data?.user._id);
-      }
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (error) {
-      setMessages((oldState) => {
-        return { ...oldState, errorMsg: error.response.data.msg };
-      });
-    }
-  };
+  //     if (data?.msg === "done") {
+  //       // update api messages
+  //       setMessages((oldState) => {
+  //         return {
+  //           ...oldState,
+  //           successfulMsg: "Successful! Redirecting to Login page!",
+  //         };
+  //       });
+  //       // navigate to login screen after 1.5 seconds
+  //       setTimeout(() => {
+  //         navigate("/login");
+  //       }, 1500);
+  //     }
+  //   } catch (error) {
+  //     setMessages((oldState) => {
+  //       return { ...oldState, errorMsg: error.response.data.msg };
+  //     });
+  //   }
+  // };
 
   // -----formik schema------
   const validationSchema = Yup.object({
@@ -71,29 +74,37 @@ export default function Register() {
   // -----formik schema------
   const form = useFormik({
     initialValues: { name: "", email: "", password: "", age: "", phone: "" },
-    onSubmit: callRegisterApi,
+    onSubmit: (values) => {
+      mutate(values);
+      console.log(data);
+    },
     validationSchema,
   });
 
+  useEffect(() => {
+    if (data?.msg === "done") {
+      navigate("/login");
+    }
+  }, [data]);
   return (
     <>
       <div className="container my-5 mx-auto p-5 text-center">
         <h1 className="font-bold text-3xl mb-5 inline-block">Register!</h1>
         <div>
-          {messages.successfulMsg && (
+          {data?.successfulMsg && (
             <div
               className="capitalize w-full mx-auto md:w-1/2 py-2 px-4 mb-4  text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
               role="alert"
             >
-              {messages.successfulMsg}
+              {data?.successfulMsg}
             </div>
           )}
-          {messages.errorMsg && (
+          {isError && (
             <div
               className="capitalize w-full mx-auto md:w-1/2 py-2 px-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
-              {messages.errorMsg}
+              {error?.response?.data?.msg || "Something went wrong"}
             </div>
           )}
         </div>
@@ -259,22 +270,33 @@ export default function Register() {
 
           {/* Submit button */}
           <button
-            disabled={!(form.dirty && form.isValid)}
+            disabled={!(form.dirty && form.isValid) || isPending}
             type="submit"
             className="me-3 disabled:opacity-70 disabled:cursor-not-allowed my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            Submit
+            {isPending ? <RiLoader5Fill className="animate-spin text-xl" /> : "Submit"}
           </button>
 
           {/* reset button */}
           <button
-            onClick={form.resetForm}
+            onClick={(e) => {
+              e.preventDefault();
+              form.resetForm();
+            }}
             type="reset"
             className="my-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
             Reset
           </button>
-          <p className="text-sm inline-block ms-3">You have an account? <span className="font-semibold cursor-pointer" onClick={()=> navigate('/login')}>Login</span></p>
+          <p className="text-sm inline-block ms-3">
+            You have an account?{" "}
+            <span
+              className="font-semibold cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </span>
+          </p>
         </form>
       </div>
     </>
