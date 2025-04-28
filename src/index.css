@@ -8,7 +8,7 @@ html {
 }
 
 .row {
-    @apply flex flex-wrap justify-center;
+    @apply flex flex-wrap;
 }
 
 .active {

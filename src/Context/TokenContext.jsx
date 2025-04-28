@@ -6,12 +6,11 @@ export let TokenContext = createContext(0);
 
 export default function TokenContextProvider(props) {
   const [token, setToken] = useState(null);
-  function getToken() {
+  useEffect(() => {
     if (localStorage.getItem("NoteAppToken")) {
       setToken(localStorage.getItem("NoteAppToken"));
     }
-  }
-
+  }, []);
   return (
     <TokenContext.Provider value={{ token, setToken }}>
       {props.children}

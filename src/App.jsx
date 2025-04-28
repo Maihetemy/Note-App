@@ -39,11 +39,11 @@ function App() {
   ]);
   return (
     <>
-      <TokenContextProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <TokenContextProvider>
           <RouterProvider router={routes}></RouterProvider>
-        </QueryClientProvider>
-      </TokenContextProvider>
+        </TokenContextProvider>
+      </QueryClientProvider>
     </>
   );
 }

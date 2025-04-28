@@ -1,11 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import style from "./NavBar.module.css";
 import noteAppIcon from "../../assets/notelogo.png";
-import { Link, NavLink } from "react-router-dom";
+import { Link, Navigate, NavLink } from "react-router-dom";
+import { TokenContext } from "../../Context/TokenContext";
 export default function NavBar() {
   const [counter, setCounter] = useState(0);
+  const { setToken } = useContext(TokenContext);
+
   useEffect(() => {}, []);
+  function logoutFun() {
+    localStorage.removeItem("NoteAppToken");
+    setToken(null);
+    navigator("/login");
+  }
   return (
     <>
       <nav className="default-background">
@@ -49,7 +57,7 @@ export default function NavBar() {
                 <NavLink to="register">Register</NavLink>
               </li>
               <li className="block py-2 px-3 default-text-color rounded ">
-                <NavLink to="">LogOut</NavLink>
+                <Link onClick={() => logoutFun()}>LogOut</Link>
               </li>
             </ul>
           </div>
