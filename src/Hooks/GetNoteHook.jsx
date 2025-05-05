@@ -9,7 +9,7 @@ const useGetNote = (userToken) => {
     });
   };
   return useQuery({
-    queryKey: ["getNote"],
+    queryKey: ["GetNote"],
     queryFn: getNoteFn,
     select: (data) => data.data,
     enabled: !!userToken,

@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import style from "./Login.module.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Register from "./../Register/Register";
 import { TokenContext } from "../../Context/TokenContext";
