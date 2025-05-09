@@ -7,17 +7,27 @@ import useRegisterHook from "../../Hooks/RegisterHook";
 import { TokenContext } from "./../../Context/TokenContext";
 import NoteModal from "../../Components/NoteModal/NoteModal";
 import { RiLoader5Fill } from "react-icons/ri";
+import { ModalOpeningContext } from './../../Context/ModalOpening';
 
 export default function Home() {
   const [notesList, setNotesList] = useState([]);
   const { token } = useContext(TokenContext);
   const { data, error, isLoading, isError } = useGetNote(token);
+  
+  // modal settings
+  const { addNewNote, setAddNewNote, editingModel, setEditingModel } = useContext(ModalOpeningContext);
+
   useEffect(() => {
     if (data?.notes) {
       console.log("Fetched notes:", data.notes);
       setNotesList(data?.notes);
     }
   }, [token, data]);
+  const openAddModal = () => {
+    // setIsModalOpen(true);
+    setAddNewNote(true);
+    setEditingModel(false);
+  };
   return (
     <>
       <div className="my-10">
@@ -25,7 +35,21 @@ export default function Home() {
           <h1 className="capitalize inline-block me-3 text-4xl font-semibold">
             Mai's Notes
           </h1>
-          <NoteModal setNotesList={setNotesList} notesList={notesList} />
+          {/* Modal toggle */}
+          <button
+            data-modal-target="default-modal"
+            // data-modal-toggle="default-modal"
+            className="capitalize cursor-pointer block text-nowrap text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            type="button"
+            onClick={() => openAddModal(true)}
+          >
+            add button
+          </button>
+          {/* Main modal */}
+          <NoteModal
+            setNotesList={setNotesList}
+            notesList={notesList}
+          />
         </div>
         {isLoading ? (
           <div className="my-10 flex justify-center">
@@ -37,7 +61,7 @@ export default function Home() {
               className="capitalize p-4 text-lg text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
               role="alert"
             >
-              {error.response.data.msg}
+              {error?.response?.data?.msg}
             </div>
           </div>
         ) : (
@@ -49,6 +73,10 @@ export default function Home() {
                   note={note}
                   setNotesList={setNotesList}
                   notesList={notesList}
+                  // editingModel={editingModel}
+                  // setEditingModel={setEditingModel}
+                  // IsModalOpen={isModalOpen}
+                  // setIsModalOpen={setIsModalOpen}
                 />
               ))}
             </div>

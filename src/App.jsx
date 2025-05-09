@@ -10,6 +10,7 @@ import ProtectedRouter from "./Components/ProtectedRouter/ProtectedRouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import TokenContextProvider from "./Context/TokenContext";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import ModalOpeningProvider from "./Context/ModalOpening";
 function App() {
   const queryClient = new QueryClient();
   const routes = createBrowserRouter([
@@ -40,10 +41,12 @@ function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <TokenContextProvider>
-          <RouterProvider router={routes}></RouterProvider>
-          <ReactQueryDevtools />
-        </TokenContextProvider>
+        <ModalOpeningProvider>
+          <TokenContextProvider>
+            <RouterProvider router={routes}></RouterProvider>
+            <ReactQueryDevtools />
+          </TokenContextProvider>
+        </ModalOpeningProvider>
       </QueryClientProvider>
     </>
   );
