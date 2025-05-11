@@ -1,14 +1,12 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-import React, { useContext, useEffect, useState } from "react";
-import style from "./NoteModal.module.css";
+import React, { useContext } from "react";
 import { Formik, useFormik } from "formik";
 import { TokenContext } from "./../../Context/TokenContext";
 import useAddNote from "../../Hooks/AddNoteHook";
 import * as Yup from "yup";
 import { RiLoader5Fill } from "react-icons/ri";
 import { ModalOpeningContext } from "./../../Context/ModalOpening";
-
+import axios from "axios";
+import { useState } from "react";
 export default function NoteModal({ setNotesList, notesList }) {
   const {
     addNewNote,
@@ -16,12 +14,7 @@ export default function NoteModal({ setNotesList, notesList }) {
     editingModel,
     setEditingModel,
     noteEdited,
-    setNoteEdited,
   } = useContext(ModalOpeningContext);
-  console.log("note ===>", noteEdited);
-  console.log("notesList", notesList);
-  console.log("addNewNote", addNewNote);
-  console.log("editingModel", editingModel);
 
   const closeModal = () => {
     setEditingModel(false);
@@ -30,9 +23,7 @@ export default function NoteModal({ setNotesList, notesList }) {
   const { token } = useContext(TokenContext);
   const {
     mutate: addNote,
-    data: addNoteData,
     isPending: isAdding,
-    error: addNoteError,
     isLoading: isAddLoading,
   } = useAddNote(token);
 
@@ -47,6 +38,35 @@ export default function NoteModal({ setNotesList, notesList }) {
       },
     });
   };
+  const [isUpdating, setIsUpdating] = useState(false);
+  const updateFn = async (values) => {
+    try {
+      setIsUpdating(true);
+      const { data } = await axios.put(
+        `https://note-sigma-black.vercel.app/api/v1/notes/${noteEdited._id}`,
+        values,
+        {
+          headers: {
+            token: `3b8ny__${token}`,
+          },
+        }
+      );
+      setIsUpdating(false);
+      console.log(data); //data.note [Edited Note]
+      if (data.msg === "done") {
+        setNotesList((oldState) =>
+          oldState.map((note) =>
+            note._id === noteEdited._id ? data.note : note
+          )
+        );
+        form.reset;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      closeModal();
+    }
+  };
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required!"),
     content: Yup.string().required("Title is required!"),
@@ -58,7 +78,11 @@ export default function NoteModal({ setNotesList, notesList }) {
       content: addNewNote ? "" : editingModel ? noteEdited?.content : "",
     },
     onSubmit: (values, { resetForm }) => {
-      addNoteFn(values);
+      if (editingModel) {
+        updateFn(values);
+      } else if (addNewNote) {
+        addNoteFn(values);
+      }
       resetForm();
     },
     validationSchema,
@@ -85,7 +109,7 @@ export default function NoteModal({ setNotesList, notesList }) {
               {/* Modal header */}
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                 <h3 className="capitalize text-xl font-semibold text-gray-900 dark:text-white">
-                  add a new note!
+                  {editingModel ? "edit note!" : "add a new note!"}
                 </h3>
                 <button
                   type="button"
@@ -181,10 +205,12 @@ export default function NoteModal({ setNotesList, notesList }) {
                     type="submit"
                     className="disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer capitalize text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
-                    {isAdding ? (
+                    {isAdding || isUpdating ? (
                       <RiLoader5Fill className="animate-spin text-xl " />
+                    ) : addNewNote ? (
+                      "add"
                     ) : (
-                      "add note"
+                      "update"
                     )}
                   </button>
                   <button

@@ -1,21 +1,18 @@
-/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
-import style from "./Home.module.css";
 import NoteCard from "../../Components/NoteCard/NoteCard";
 import useGetNote from "../../Hooks/GetNoteHook";
-import useRegisterHook from "../../Hooks/RegisterHook";
 import { TokenContext } from "./../../Context/TokenContext";
 import NoteModal from "../../Components/NoteModal/NoteModal";
 import { RiLoader5Fill } from "react-icons/ri";
-import { ModalOpeningContext } from './../../Context/ModalOpening';
+import { ModalOpeningContext } from "./../../Context/ModalOpening";
 
 export default function Home() {
   const [notesList, setNotesList] = useState([]);
   const { token } = useContext(TokenContext);
   const { data, error, isLoading, isError } = useGetNote(token);
-  
+
   // modal settings
-  const { addNewNote, setAddNewNote, editingModel, setEditingModel } = useContext(ModalOpeningContext);
+  const { setAddNewNote, setEditingModel } = useContext(ModalOpeningContext);
 
   useEffect(() => {
     if (data?.notes) {
@@ -24,7 +21,6 @@ export default function Home() {
     }
   }, [token, data]);
   const openAddModal = () => {
-    // setIsModalOpen(true);
     setAddNewNote(true);
     setEditingModel(false);
   };
@@ -33,7 +29,7 @@ export default function Home() {
       <div className="my-10">
         <div className="text-center flex justify-center my-5">
           <h1 className="capitalize inline-block me-3 text-4xl font-semibold">
-            Mai's Notes
+            Notes
           </h1>
           {/* Modal toggle */}
           <button
@@ -46,10 +42,7 @@ export default function Home() {
             add button
           </button>
           {/* Main modal */}
-          <NoteModal
-            setNotesList={setNotesList}
-            notesList={notesList}
-          />
+          <NoteModal setNotesList={setNotesList} notesList={notesList} />
         </div>
         {isLoading ? (
           <div className="my-10 flex justify-center">
@@ -73,10 +66,6 @@ export default function Home() {
                   note={note}
                   setNotesList={setNotesList}
                   notesList={notesList}
-                  // editingModel={editingModel}
-                  // setEditingModel={setEditingModel}
-                  // IsModalOpen={isModalOpen}
-                  // setIsModalOpen={setIsModalOpen}
                 />
               ))}
             </div>

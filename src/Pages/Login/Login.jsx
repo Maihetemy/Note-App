@@ -67,6 +67,8 @@ export default function Login() {
       setToken(data?.token);
       // store user token in local storage
       localStorage.setItem("NoteAppToken", data?.token);
+      console.log(data);
+      
       // navigate to home page
       setTimeout(() => {
         navigate("/");
